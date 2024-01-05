@@ -2,14 +2,16 @@
   "name": "pl.bream.dotsinfluancemaps",
   "version": "0.1.0",
   "displayName": "Dots Influance Maps implementation",
-  "description": "",
   "unity": "2020.3",
   "dependencies": {
-     "com.unity.burst": "1.4.7",
-	 "com.unity.jobs":"0.8.0-preview.23",
-	 "com.unity.collections": "0.15.0-preview.21"
- },
- "keywords": [
+    "com.unity.burst": "1.8.11",
+    "com.unity.jobs": "0.70.0-preview.7",
+    "com.unity.collections": "1.2.4",
+    "com.unity.test-framework.performance": "3.0.3"
+  },
+
+  "testables": ["com.unity.test-framework.performance"],
+  "keywords": [
     "AI"
   ],
   "author": {
@@ -17,5 +19,4 @@
     "email": "michal.leszczynski.84@gmail.com",
     "url": "https://github.com/micz84"
   }
-  
 }

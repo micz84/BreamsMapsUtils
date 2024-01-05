@@ -53,12 +53,12 @@ namespace pl.breams.dotsinfluancemaps
             }.Schedule(handle);
             self.CombineWith(handle);
         }
-        public static void SplatMap<T>(ref this T self, IInfluenceMap map, int2 center, JobHandle handle = default) where T:struct,IWorkableInfluenceMap
+        public static JobHandle SplatMap<T>(ref this T self, IInfluenceMap map, int2 center, JobHandle handle = default) where T:struct,IWorkableInfluenceMap
         {
             handle = JobHandle.CombineDependencies(handle, self.Handle);
             if (!MapUtils.GetJobParams(self.Width, self.Height, map.Width, map.Height, center, out var cellsCount, out var smallMapStartIndex, out var biggerMapStartIndex,
                 out var workingWidth))
-                return;
+                return handle;
             if (smallMapStartIndex == 0 && biggerMapStartIndex == 0 && map.Height == self.Height && map.Width == self.Width)
                 handle = new AddMapAToMapBJob
                 {
@@ -77,6 +77,7 @@ namespace pl.breams.dotsinfluancemaps
                     WorkingWidth = workingWidth
                 }.Schedule(cellsCount, math.min(2048, map.Length), handle);
             self.CombineWith(handle);
+            return self.Handle;
         }
 
         public static void LiftMap<T>(ref this T self, IInfluenceMap map, int2 center, JobHandle handle = default) where T:struct,IWorkableInfluenceMap

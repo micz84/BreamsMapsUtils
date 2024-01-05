@@ -7,10 +7,10 @@
         "Unity.Collections",
         "Unity.Burst",
         "Unity.Mathematics",
-        "Unity.PerformanceTesting",
-        "Unity.PerformanceTesting.Editor",
         "Unity.Jobs",
-        "pl.breams.dotsinfluancemaps"
+        "pl.breams.dotsinfluancemaps",
+        "Unity.PerformanceTesting",
+        "Unity.PerformanceTesting.Editor"
     ],
     "includePlatforms": [
         "Editor"

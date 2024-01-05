@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using pl.breams.dotsinfluancemaps.interfaces;
 using Unity.Collections;
+using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.PerformanceTesting;
 using UnityEngine;
@@ -29,8 +30,8 @@ namespace pl.breams.dotsinfluancemaps.tests.performance
                 mapBData[i] = rand.NextFloat();
             Measure.Method(() =>
                 {
-                    var combiner = new WorkableInfluneceMap(size, Allocator.TempJob);
-                    var combiner2 = new WorkableInfluneceMap(size/2, Allocator.TempJob);
+                    var combiner = new WorkableInfluneceMap(size, Allocator.Persistent);
+                    var combiner2 = new WorkableInfluneceMap(size/2, Allocator.Persistent);
                     combiner.CopyMap(mapA);
                     combiner.SplatMap(mapB, new int2(combiner.Width/2, combiner.Height/2));
                     combiner2.LiftMap(combiner, new int2(combiner.Width/4, combiner.Height/4), combiner.Handle);
@@ -62,8 +63,8 @@ namespace pl.breams.dotsinfluancemaps.tests.performance
                 mapBData[i] = rand.NextFloat();
             Measure.Method(() =>
                 {
-                    var combiner = new WorkableInfluneceMap(size, Allocator.TempJob);
-                    var combiner2 = new WorkableInfluneceMap(size/2, Allocator.TempJob);
+                    var combiner = new WorkableInfluneceMap(size, Allocator.Persistent);
+                    var combiner2 = new WorkableInfluneceMap(size/2, Allocator.Persistent);
                     combiner.CopyMap(mapA);
                     combiner.SplatMap(mapB, new int2(combiner.Width/2, combiner.Height/2));
                     combiner.SplatMap(mapB, new int2(combiner.Width/4, combiner.Height/4));
@@ -100,8 +101,8 @@ namespace pl.breams.dotsinfluancemaps.tests.performance
                 mapBData[i] = rand.NextFloat();
             Measure.Method(() =>
                 {
-                    var combiner = new WorkableInfluneceMap(size, Allocator.TempJob);
-                    var combiner2 = new WorkableInfluneceMap(size/2, Allocator.TempJob);
+                    var combiner = new WorkableInfluneceMap(size, Allocator.Persistent);
+                    var combiner2 = new WorkableInfluneceMap(size/2, Allocator.Persistent);
                     combiner.CopyMap(mapA);
                     for (int i = 0; i < splatCountMultiply; i++)
                     {
@@ -142,8 +143,8 @@ namespace pl.breams.dotsinfluancemaps.tests.performance
                 mapBData[i] = rand.NextFloat();
             Measure.Method(() =>
                 {
-                    var combiner = new WorkableInfluneceMap(size, Allocator.TempJob);
-                    var combiner2 = new WorkableInfluneceMap(size/2, Allocator.TempJob);
+                    var combiner = new WorkableInfluneceMap(size, Allocator.Persistent);
+                    var combiner2 = new WorkableInfluneceMap(size/2, Allocator.Persistent);
                     for (int i = 0; i < splatCountMultiply; i++)
                     {
                         combiner.SplatMap(mapB, new int2(combiner.Width / 2, combiner.Height / 2));
@@ -182,20 +183,20 @@ namespace pl.breams.dotsinfluancemaps.tests.performance
             var mapBData = mapB.Data;
             for (int i = 0; i < mapB.Length; i++)
                 mapBData[i] = rand.NextFloat();
-            var combiner = new WorkableInfluneceMap(size, Allocator.TempJob);
+            var combiner = new WorkableInfluneceMap(size, Allocator.Persistent);
             Measure.Method(() =>
                 {
-                    var combiner2 = new WorkableInfluneceMap(splatSize, Allocator.TempJob);
+                    var combiner2 = new WorkableInfluneceMap(splatSize, Allocator.Persistent);
                     for (int i = 0; i < splatCountMultiply; i++)
                     {
-                        combiner.SplatMap(mapB, new int2(rand.NextInt(0,combiner.Width), rand.NextInt(0,combiner.Height)));
-                        combiner.SplatMap(mapB, new int2(rand.NextInt(0,combiner.Width), rand.NextInt(0,combiner.Height)));
-                        combiner.SplatMap(mapB, new int2(rand.NextInt(0,combiner.Width), rand.NextInt(0,combiner.Height)));
-                        combiner.SplatMap(mapB, new int2(rand.NextInt(0,combiner.Width), rand.NextInt(0,combiner.Height)));
-                        combiner.SplatMap(mapB, new int2(rand.NextInt(0,combiner.Width), rand.NextInt(0,combiner.Height)));
+                        combiner.SplatMap(mapB, new int2(rand.NextInt(0,combiner.Width), rand.NextInt(0,combiner.Height)), combiner.Handle);
+                        combiner.SplatMap(mapB, new int2(rand.NextInt(0,combiner.Width), rand.NextInt(0,combiner.Height)), combiner.Handle);
+                        combiner.SplatMap(mapB, new int2(rand.NextInt(0,combiner.Width), rand.NextInt(0,combiner.Height)), combiner.Handle);
+                        combiner.SplatMap(mapB, new int2(rand.NextInt(0,combiner.Width), rand.NextInt(0,combiner.Height)), combiner.Handle);
+                        combiner.SplatMap(mapB, new int2(rand.NextInt(0,combiner.Width), rand.NextInt(0,combiner.Height)), combiner.Handle);
                     }
 
-                    combiner2.LiftMap(combiner, new int2(rand.NextInt(0,combiner.Width), rand.NextInt(0,combiner.Height)));
+                    combiner2.LiftMap(combiner, new int2(rand.NextInt(0,combiner.Width), rand.NextInt(0,combiner.Height)), combiner.Handle);
                     combiner2.Handle.Complete();
                     combiner2.Dispose();
 
@@ -226,20 +227,20 @@ namespace pl.breams.dotsinfluancemaps.tests.performance
             var mapBData = mapB.Data;
             for (int i = 0; i < mapB.Length; i++)
                 mapBData[i] = rand.NextFloat();
-            var combiner = new WorkableInfluneceMap(size, Allocator.TempJob);
+            var combiner = new WorkableInfluneceMap(size, Allocator.Persistent);
             Measure.Method(() =>
                 {
-                    var combiner2 = new WorkableInfluneceMap(splatSize, Allocator.TempJob);
+                    var combiner2 = new WorkableInfluneceMap(splatSize, Allocator.Persistent);
                     for (int i = 0; i < splatCountMultiply; i++)
                     {
-                        combiner.SplatMap(mapB, new int2(rand.NextInt(0,combiner.Width), rand.NextInt(0,combiner.Height)));
-                        combiner.SplatMap(mapB, new int2(rand.NextInt(0,combiner.Width), rand.NextInt(0,combiner.Height)));
-                        combiner.SplatMap(mapB, new int2(rand.NextInt(0,combiner.Width), rand.NextInt(0,combiner.Height)));
-                        combiner.SplatMap(mapB, new int2(rand.NextInt(0,combiner.Width), rand.NextInt(0,combiner.Height)));
-                        combiner.SplatMap(mapB, new int2(rand.NextInt(0,combiner.Width), rand.NextInt(0,combiner.Height)));
+                        combiner.SplatMap(mapB, new int2(rand.NextInt(0,combiner.Width), rand.NextInt(0,combiner.Height)), combiner.Handle);
+                        combiner.SplatMap(mapB, new int2(rand.NextInt(0,combiner.Width), rand.NextInt(0,combiner.Height)), combiner.Handle);
+                        combiner.SplatMap(mapB, new int2(rand.NextInt(0,combiner.Width), rand.NextInt(0,combiner.Height)), combiner.Handle);
+                        combiner.SplatMap(mapB, new int2(rand.NextInt(0,combiner.Width), rand.NextInt(0,combiner.Height)), combiner.Handle);
+                        combiner.SplatMap(mapB, new int2(rand.NextInt(0,combiner.Width), rand.NextInt(0,combiner.Height)), combiner.Handle);
                     }
 
-                    combiner2.LiftMap(combiner, new int2(rand.NextInt(0,combiner.Width), rand.NextInt(0,combiner.Height)));
+                    combiner2.LiftMap(combiner, new int2(rand.NextInt(0,combiner.Width), rand.NextInt(0,combiner.Height)), combiner.Handle);
                     combiner2.Handle.Complete();
                     combiner2.Dispose();
 
@@ -270,13 +271,13 @@ namespace pl.breams.dotsinfluancemaps.tests.performance
             var mapBData = mapB.Data;
             for (int i = 0; i < mapB.Length; i++)
                 mapBData[i] = rand.NextFloat();
-            var combiner = new WorkableInfluneceMap(size, Allocator.TempJob);
+            var combiner = new WorkableInfluneceMap(size, Allocator.Persistent);
             Measure.Method(() =>
                 {
-                    var combiner2 = new WorkableInfluneceMap(splatSize, Allocator.TempJob);
+                    var combiner2 = new WorkableInfluneceMap(splatSize, Allocator.Persistent);
                     for (int i = 0; i < splatCountMultiply; i++)
-                        combiner.SplatMap(mapB, new int2(rand.NextInt(0,combiner.Width), rand.NextInt(0,combiner.Height)));
-                    combiner2.LiftMap(combiner, new int2(rand.NextInt(0,combiner.Width), rand.NextInt(0,combiner.Height)));
+                        combiner.SplatMap(mapB, new int2(rand.NextInt(0,combiner.Width), rand.NextInt(0,combiner.Height)), combiner.Handle);
+                    combiner2.LiftMap(combiner, new int2(rand.NextInt(0,combiner.Width), rand.NextInt(0,combiner.Height)), combiner.Handle);
                     combiner2.Handle.Complete();
                     combiner2.Dispose();
 
